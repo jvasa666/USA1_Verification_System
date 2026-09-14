@@ -1,0 +1,7 @@
+{
+  "wallet_id": "local_enterprise_vault_abc1ef19f80cb9cd",
+  "address": "0xfe24952bdf127e851ab1f7a3e4928ea50048a972",
+  "private_key_secure_ref": "file://./secure_keystore.enc",
+  "cage_code": "17ZE9",
+  "created_at": "2026-09-14T15:26:21.017Z"
+}
