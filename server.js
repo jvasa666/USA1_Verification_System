@@ -23,28 +23,29 @@ const server = http.createServer((req, res) => {
                 data = JSON.parse(body);
             } catch (e) {}
 
-            let amount = "$0.05";
             let destinationWallet = "0xfe24952bdf127e851ab1f7a3e4928ea50048a972";
-            
-            if (fs.existsSync('local_wallet.json')) {
+            if (data.destination_wallet) {
+                destinationWallet = data.destination_wallet;
+            } else if (fs.existsSync('local_wallet.json')) {
                 try {
-                    const walletConfig = JSON.parse(fs.readFileSync('local_wallet.json', 'utf8'));
-                    if (walletConfig.address) {
-                        destinationWallet = walletConfig.address;
-                    }
+                    const w = JSON.parse(fs.readFileSync('local_wallet.json', 'utf8'));
+                    if (w.address) destinationWallet = w.address;
                 } catch (e) {}
             }
 
-            if (data.action === "DISTRIBUTE_REWARDS") {
-                amount = "$" + (data.amount_usd || 50.00).toFixed(2);
+            let amount = "$0.05";
+            if (data.amount_usd) {
+                amount = "$" + Number(data.amount_usd).toLocaleString('en-US', {minimumFractionDigits: 2});
+            } else if (data.action === "DISTRIBUTE_REWARDS") {
+                amount = "$50.00";
             } else if (data.action === "DISTRIBUTE_BILLION_REWARDS") {
-                amount = "$" + (data.amount_usd || 5000.00).toLocaleString('en-US', {minimumFractionDigits: 2});
+                amount = "$5,000.00";
             } else if (data.action === "DISTRIBUTE_TRILLION_REWARDS") {
-                amount = "$" + (data.amount_usd || 5000000.00).toLocaleString('en-US', {minimumFractionDigits: 2});
+                amount = "$5,000,000.00";
             } else if (data.action === "DISTRIBUTE_HUNDREDS_TRILLIONS_REWARDS") {
-                amount = "$" + (data.amount_usd || 500000000.00).toLocaleString('en-US', {minimumFractionDigits: 2});
+                amount = "$500,000,000.00";
             } else if (data.action === "DISTRIBUTE_QUADRILLIONS_REWARDS" || data.action === "DISTRIBUTE_QUINTILLIONS_REWARDS" || data.action === "INITIATE_FULL_WITHDRAWAL") {
-                amount = "$" + (data.amount_usd || 500000000000000.06).toLocaleString('en-US', {minimumFractionDigits: 2});
+                amount = "$500,000,000,000,000.06";
             }
 
             if (data.action === "GET_DESTINATION_DETAILS" || data.action === "VERIFY_DESTINATION_WALLET") {
@@ -68,7 +69,7 @@ const server = http.createServer((req, res) => {
                 currency: "USD",
                 destination_wallet: destinationWallet,
                 txid: "03b13c570f70fc160e3d792d9f654e64a7d2cfad065fc9d084b4039438a95f3a",
-                message: `Enterprise payout of ${amount} routed successfully to local PC wallet ${destinationWallet}`,
+                message: `Enterprise full balance payout of ${amount} transferred successfully to local wallet ${destinationWallet}`,
                 timestamp: new Date().toISOString()
             };
             res.writeHead(200, { 'Content-Type': 'application/json' });
