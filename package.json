@@ -1,0 +1,30 @@
+{
+  "name": "usa1-verification-system",
+  "version": "1.0.0",
+  "description": "1970s-Style Banking Ledger Validation System",
+  "author": "CAGE 17ZE9",
+  "license": "AGPL-3.0",
+  "main": "src/verify.js",
+  "scripts": {
+    "verify": "node src/verify.js",
+    "check-tron": "node src/tron.js",
+    "check-proof": "node src/verify.js --proof",
+    "full-verify": "bash scripts/full-verify.sh",
+    "test": "node tests/test.js",
+    "start": "node src/verify.js"
+  },
+  "dependencies": {
+    "tronweb": "^5.3.5"
+  },
+  "keywords": [
+    "verification",
+    "ledger",
+    "cobal",
+    "sha256",
+    "tron",
+    "blockchain",
+    "government",
+    "cage",
+    "17ZE9"
+  ]
+}
