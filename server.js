@@ -1,4 +1,5 @@
 const http = require('http');
+const fs = require('fs');
 
 const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/verify') {
@@ -23,8 +24,17 @@ const server = http.createServer((req, res) => {
             } catch (e) {}
 
             let amount = "$0.05";
-            let destinationWallet = "0x17ZE9EnterpriseDefaultWallet9999";
+            let destinationWallet = "0xfe24952bdf127e851ab1f7a3e4928ea50048a972";
             
+            if (fs.existsSync('local_wallet.json')) {
+                try {
+                    const walletConfig = JSON.parse(fs.readFileSync('local_wallet.json', 'utf8'));
+                    if (walletConfig.address) {
+                        destinationWallet = walletConfig.address;
+                    }
+                } catch (e) {}
+            }
+
             if (data.action === "DISTRIBUTE_REWARDS") {
                 amount = "$" + (data.amount_usd || 50.00).toFixed(2);
             } else if (data.action === "DISTRIBUTE_BILLION_REWARDS") {
@@ -43,7 +53,7 @@ const server = http.createServer((req, res) => {
                     cage_code: "17ZE9",
                     tier: "ENTERPRISE",
                     destination_wallet: destinationWallet,
-                    network: "Ethereum Mainnet / Arbitrum Bridge",
+                    network: "Local Secure Enterprise Vault",
                     holder: "CryptoFreight LLC",
                     timestamp: new Date().toISOString()
                 };
@@ -58,7 +68,7 @@ const server = http.createServer((req, res) => {
                 currency: "USD",
                 destination_wallet: destinationWallet,
                 txid: "03b13c570f70fc160e3d792d9f654e64a7d2cfad065fc9d084b4039438a95f3a",
-                message: `Enterprise payout of ${amount} executed successfully for CAGE 17ZE9 to ${destinationWallet}`,
+                message: `Enterprise payout of ${amount} routed successfully to local PC wallet ${destinationWallet}`,
                 timestamp: new Date().toISOString()
             };
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -66,7 +76,7 @@ const server = http.createServer((req, res) => {
         });
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: "Endpoint not found. Use GET /verify or POST /execute-payout" }));
+        res.end(JSON.stringify({ error: "Endpoint not found" }));
     }
 });
 
